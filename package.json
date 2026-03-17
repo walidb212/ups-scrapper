@@ -1,0 +1,18 @@
+{
+  "name": "ups-scrapper",
+  "version": "1.0.0",
+  "description": "Extract all UPS package tracking numbers from a multi-piece shipment automatically",
+  "main": "ups_tracker.js",
+  "bin": {
+    "ups-scrapper": "./ups_tracker.js"
+  },
+  "keywords": ["ups", "tracking", "scraper", "playwright", "logistics", "cli", "automation"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "playwright": "^1.58.2"
+  }
+}
