@@ -111,21 +111,35 @@ async function scrapeWithBrowser(trackingNumber, locale, headless, verbose, useF
     console.log('[d] Lien multi-colis non trouvé (envoi à 1 colis ou sélecteur obsolète)');
   }
 
-  // Parcourir toutes les pages de pagination pour les envois multi-colis
+  // Parcourir toutes les pages de pagination pour les envois multi-colis.
+  // L'UI Angular d'UPS utilise le bouton #stApp_pagination_nextBtn (5 colis/page,
+  // via GetAdditionalPackages startingTrackIndex). On clique "Next" jusqu'à ce
+  // qu'il soit désactivé, en attendant le XHR de chaque page.
   if (clickedMulti) {
-    let pageNum = 1;
-    while (true) {
+    for (let pageNum = 1; pageNum <= 50; pageNum++) {
       try {
-        // Chercher le bouton "Next" dans la pagination
-        const nextBtn = await page.$('button.page-link:has-text("Next"), li.page-item:not(.disabled) button:has-text("Next")');
+        const nextBtn = await page.$('#stApp_pagination_nextBtn, button.ups-pagination-btn_next, button[aria-label="next" i]');
         if (!nextBtn) {
-          if (verbose) console.log(`[d] Pagination : dernière page (page ${pageNum})`);
+          if (verbose) console.log(`[d] Pagination : pas de bouton Next (page ${pageNum})`);
           break;
         }
-        pageNum++;
-        if (verbose) console.log(`[d] Pagination : clic sur page ${pageNum}`);
+        const disabled = await nextBtn.evaluate((el) =>
+          el.disabled || el.getAttribute('aria-disabled') === 'true' ||
+          /disabled/.test(el.className) || el.offsetParent === null
+        );
+        if (disabled) {
+          if (verbose) console.log(`[d] Pagination : dernière page atteinte (page ${pageNum})`);
+          break;
+        }
+        if (verbose) console.log(`[d] Pagination : clic Next -> page ${pageNum + 1}`);
+        // On attend le XHR de la page suivante déclenché par le clic.
+        const waitXhr = page.waitForResponse(
+          (r) => /GetAdditionalPackages/i.test(r.url()) && r.status() < 400,
+          { timeout: 12000 }
+        ).catch(() => null);
         await page.evaluate((el) => el.click(), nextBtn);
-        await page.waitForTimeout(4000);
+        await waitXhr;
+        await page.waitForTimeout(1500);
       } catch (_) {
         break;
       }
