@@ -1,0 +1,8 @@
+node_modules
+.git
+.gitignore
+debug_*.html
+debug_api_*.json
+tracking_results.txt
+apify_storage
+storage

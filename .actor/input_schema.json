@@ -1,0 +1,43 @@
+{
+    "title": "UPS Multi-Package Tracker Input",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "trackingNumber": {
+            "title": "UPS master tracking number",
+            "type": "string",
+            "description": "The 1Z... master tracking number of a multi-piece shipment.",
+            "editor": "textfield",
+            "example": "1ZB57B606834792857"
+        },
+        "locale": {
+            "title": "UPS locale",
+            "type": "string",
+            "description": "UPS site locale.",
+            "editor": "textfield",
+            "default": "en_US"
+        },
+        "proxyUrl": {
+            "title": "Proxy URL (override optionnel)",
+            "type": "string",
+            "description": "Override du proxy. Par défaut l'actor utilise le secret Apify UPS_PROXY_URL (ProxyBaron FR). Le token session-XXX est tourné à chaque tentative pour une IP fraîche. Vide + pas de secret = résidentiel Apify.",
+            "editor": "textfield"
+        },
+        "proxyType": {
+            "title": "Type de proxy Apify (fallback si pas de proxyUrl)",
+            "type": "string",
+            "description": "RESIDENTIAL | DATACENTER | NONE.",
+            "editor": "select",
+            "enum": ["RESIDENTIAL", "DATACENTER", "NONE"],
+            "default": "RESIDENTIAL"
+        },
+        "maxAttempts": {
+            "title": "Tentatives max",
+            "type": "integer",
+            "description": "Nombre de tentatives de scrape avant d'abandonner.",
+            "editor": "number",
+            "default": 4
+        }
+    },
+    "required": ["trackingNumber"]
+}

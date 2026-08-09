@@ -1,0 +1,13 @@
+{
+    "actorSpecification": 1,
+    "name": "ups-multipackage-tracker",
+    "title": "UPS Multi-Package Tracker",
+    "description": "One UPS master tracking number in, every package number (with status) out. Handles multi-piece shipments pre-scan.",
+    "version": "1.0",
+    "buildTag": "latest",
+    "input": "./input_schema.json",
+    "dockerfile": "./Dockerfile",
+    "environmentVariables": {
+        "UPS_PROXY_URL": "@ups-proxy-url"
+    }
+}
